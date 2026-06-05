@@ -3,11 +3,6 @@ import pytest
 from praktikum.burger import Burger
 
 
-from unittest.mock import Mock
-import pytest
-from praktikum.burger import Burger
-
-
 class Bun:
 
     def get_name(self):
