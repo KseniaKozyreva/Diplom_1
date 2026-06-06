@@ -1,27 +1,8 @@
 from unittest.mock import Mock
 import pytest
 from praktikum.burger import Burger
-
-
-class Bun:
-
-    def get_name(self):
-        pass
-
-    def get_price(self):
-        pass
-
-
-class Ingredient:
-
-    def get_name(self):
-        pass
-
-    def get_price(self):
-        pass
-
-    def get_type(self):
-        pass
+from praktikum.bun import Bun  
+from praktikum.ingredient import Ingredient  
 
 
 class TestBurger:
@@ -82,19 +63,19 @@ class TestBurger:
         assert burger.get_price() == expected_total
 
     @pytest.mark.parametrize(
-        "bun_name, ing_type, ing_name, ing_price, expected_price_str",
+        "bun_name, bun_price, ing_type, ing_name, ing_price, expected_total_price",
         [
-            ("Краторная булка", "SAUCE", "чили", 50.0, "Price: 250.0"),
-            ("Супер булка", "FILLING", "биг котлета", 150.0, "Price: 350.0"),
+            ("Краторная булка", 100.0, "SAUCE", "чили", 50.0, 250.0),
+            ("Супер булка", 100.0, "FILLING", "биг котлета", 150.0, 350.0),
         ],
     )
     def test_get_receipt_formatting(
-        self, bun_name, ing_type, ing_name, ing_price, expected_price_str
+        self, bun_name, bun_price, ing_type, ing_name, ing_price, expected_total_price
     ):
         burger = Burger()
         mock_bun = Mock(spec=Bun)
         mock_bun.get_name.return_value = bun_name
-        mock_bun.get_price.return_value = 100.0
+        mock_bun.get_price.return_value = bun_price
         burger.set_buns(mock_bun)
 
         mock_ingredient = Mock(spec=Ingredient)
@@ -103,7 +84,11 @@ class TestBurger:
         mock_ingredient.get_price.return_value = ing_price
         burger.add_ingredient(mock_ingredient)
 
-        receipt = burger.get_receipt()
-        assert f"(==== {bun_name} ====)" in receipt
-        assert f"= {ing_type.lower()} {ing_name} =" in receipt
-        assert expected_price_str in receipt
+        expected_receipt = (
+            f"(==== {bun_name} ====)\n"
+            f"= {ing_type.lower()} {ing_name} =\n"
+            f"(==== {bun_name} ====)\n\n"
+            f"Price: {expected_total_price}"
+        )
+
+        assert burger.get_receipt() == expected_receipt
