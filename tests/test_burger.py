@@ -90,5 +90,18 @@ class TestBurger:
             f"(==== {bun_name} ====)\n\n"
             f"Price: {expected_total_price}"
         )
+        assert burger.get_receipt() == expected_receipt
 
+    def test_get_receipt_without_ingredients(self):
+        burger = Burger()
+        mock_bun = Mock(spec=Bun)
+        mock_bun.get_name.return_value = "Марсианская булка"
+        mock_bun.get_price.return_value = 100.0
+        burger.set_buns(mock_bun)
+
+        expected_receipt = (
+            f"(==== Марсианская булка ====)\n"
+            f"(==== Марсианская булка ====)\n\n"
+            f"Price: 200.0"
+        )
         assert burger.get_receipt() == expected_receipt
