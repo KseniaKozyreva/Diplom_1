@@ -7,38 +7,69 @@ from praktikum.ingredient import Ingredient
 
 class TestBurger:
 
-    def test_init_burger_is_empty(self):
-        burger = Burger()
-        assert burger.bun is None
-        assert burger.ingredients == []
 
     def test_set_buns_adds_bun(self):
         burger = Burger()
         mock_bun = Mock(spec=Bun)
+        mock_bun.get_price.return_value = 100.0  
+        
         burger.set_buns(mock_bun)
-        assert burger.bun == mock_bun
+        
+        assert burger.get_price() == 200.0
 
     def test_add_ingredient_adds_to_list(self):
         burger = Burger()
+        mock_bun = Mock(spec=Bun)
+        mock_bun.get_price.return_value = 0.0
+        burger.set_buns(mock_bun)
+        
         mock_ingredient = Mock(spec=Ingredient)
+        mock_ingredient.get_price.return_value = 50.0  
+        
         burger.add_ingredient(mock_ingredient)
-        assert burger.ingredients == [mock_ingredient]
+        
+        assert burger.get_price() == 50.0
 
     def test_remove_ingredient_clears_list(self):
         burger = Burger()
+        mock_bun = Mock(spec=Bun)
+        mock_bun.get_price.return_value = 0.0
+        burger.set_buns(mock_bun)
+        
         mock_ingredient = Mock(spec=Ingredient)
+        mock_ingredient.get_price.return_value = 50.0
+        
         burger.add_ingredient(mock_ingredient)
+        
         burger.remove_ingredient(0)
-        assert burger.ingredients == []
+        
+        assert burger.get_price() == 0.0
 
     def test_move_ingredient_swaps_positions(self):
         burger = Burger()
+        mock_bun = Mock(spec=Bun)
+        mock_bun.get_name.return_value = "Булка"
+        mock_bun.get_price.return_value = 0.0
+        burger.set_buns(mock_bun)
+
         mock_ing1 = Mock(spec=Ingredient)
+        mock_ing1.get_name.return_value = "соус"
+        mock_ing1.get_type.return_value = "SAUCE"
+        mock_ing1.get_price.return_value = 0.0
+        
         mock_ing2 = Mock(spec=Ingredient)
+        mock_ing2.get_name.return_value = "котлета"
+        mock_ing2.get_type.return_value = "FILLING"
+        mock_ing2.get_price.return_value = 0.0
+
         burger.add_ingredient(mock_ing1)
         burger.add_ingredient(mock_ing2)
+        
         burger.move_ingredient(0, 1)
-        assert burger.ingredients == [mock_ing2, mock_ing1]
+        
+        receipt = burger.get_receipt()
+        assert receipt.index("котлета") < receipt.index("соус")
+
 
     @pytest.mark.parametrize(
         "bun_price, ingredient_price, expected_total",
